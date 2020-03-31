@@ -6,12 +6,12 @@ Monkey Ball is a physics-based, ball-rolling, puzzle game. The game is based aro
 
 ## NEEDS
 
-# Fancy Shapes / Models
+Fancy Shapes / Models
 
-# Textures - at least one Multi-Texture, Skybox
+Textures - at least one Multi-Texture, Skybox
 
-# Physics
+Physics
 
-# Interaction
+Interaction
 
-# Shaders - Phong - calculated on the fly, discard
+Shaders - Phong - calculated on the fly, discard
