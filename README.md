@@ -8,7 +8,7 @@ Link to the specification google doc: https://docs.google.com/document/d/1N4TfpK
 
 ## NEEDS
 
-Deliverables document: https://docs.google.com/document/d/1N4TfpKVYYQ-pySo_aPh5mp_KUuXBKvp1xFdxuhNxHZU/edit?usp=sharing
+Deliverables document: https://docs.google.com/document/d/1WTXcJeKBPZLiidqBOr8ojQRd3EDKLCOFWWMMwQOHFuw/edit?usp=sharing
 
 Fancy Shapes / Models
 
