@@ -1,13 +1,13 @@
 'use strict';
 
-var http = require('http'); // 1 - Import Node.js core module
+var http = require('http');
+var express = require('express');
+var path = require('path');
 
-var server = http.createServer(function (req, res) {   // 2 - creating server
+var app = express();
 
-    //handle incomming requests here..
-
+app.get('/', function (req, res) {
+    res.send('Hello World!!!');
 });
 
-server.listen(5000); //3 - listen for any incoming requests
-
-console.log('Node.js web server at port 5000 is running..')
+app.listen(53158, () => console.log('The server is up and running...'));
