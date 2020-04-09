@@ -6,8 +6,8 @@ var path = require('path');
 
 var app = express();
 
-app.get('/', function (req, res) {
-    res.send('Hello World!!!');
+app.get('/', (req, res) => {
+    res.sendFile('index.html', {root : __dirname});
 });
 
 app.listen(53158, () => console.log('The server is up and running...'));
