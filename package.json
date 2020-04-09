@@ -1,0 +1,23 @@
+{
+  "name": "monkey-ball-wgl2",
+  "version": "1.0.0",
+  "description": "Classic Monkey Ball made with WebGL2.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NickSeroni/Monkey-Ball-WGL2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NickSeroni/Monkey-Ball-WGL2/issues"
+  },
+  "homepage": "https://github.com/NickSeroni/Monkey-Ball-WGL2#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "path": "^0.12.7"
+  }
+}
