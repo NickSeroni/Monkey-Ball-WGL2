@@ -21,3 +21,36 @@ Interaction
 Shaders - Phong - calculated on the fly, discard
 
 Splines
+
+# Roadmap
+
+## Initial Features/ Foundation
+### Setup
+Load models
+Setup physics
+Setup lighting
+MAKE SURE BALL ROLLS
+
+## Necessary but maybe harder:
+### Modeling workflow
+Ball
+Platforms
+glTF format
+### Physics Workflow
+Add physics to our objects
+### Lighting
+Basic Phong shading
+Secondary Features
+### Game Mechanics
+Goal
+Bananas
+Title Screen
+power ups / Speed Boost
+
+Textures
+Environment / background texture
+Proper monkey and ball models w/ transparent texture
+Level textures
+3rd Round
+Polish/ Quality Features
+Put a monkey in the ball
