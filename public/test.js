@@ -156,7 +156,6 @@ function main() {
     }
 
     function populate(n) {
-
         var max = document.getElementById("MaxNumber").value;
 
         if(n===1) type = 1
@@ -212,6 +211,7 @@ function main() {
             scene.add( meshs[i] );
         }
     }
+    window.populate = populate;
 
     function updateOimoPhysics() {
         if(world==null) return;
