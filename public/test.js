@@ -212,6 +212,7 @@ function main() {
             scene.add( meshs[i] );
         }
     }
+    
 
     function updateOimoPhysics() {
         if(world==null) return;
@@ -221,7 +222,7 @@ function main() {
         var x, y, z, mesh, body, i = bodys.length;
 
         while (i--){
-            body = bodys[i];
+            body = bodys[i]; body = bodys[i];
             mesh = meshs[i];
 
             if(!body.sleeping){
