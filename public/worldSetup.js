@@ -2,18 +2,19 @@ import * as THREE from '/three.module.js';
 import * as OIMO from '/oimo.module.js';
 import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/loaders/GLTFLoader.js';
-
+import * as glMatrix from '/gl-matrix-min.js';
 
 var world = null;
 var box= null;
 var sphere = null;
+var monkey_ball = null;
 var camera, scene, light, renderer, canvas, controls,infos;
-var body = null,meshes = [];
+var body = null,meshes = [],bodys = [];
 var antialias = true;
 var materialType = 'MeshBasicMaterial';
 var geos = {};
 var mats = {};
-
+const gltfLoader = new GLTFLoader();
 
 //sets up geometry and calls other setters
 function setup()
@@ -62,14 +63,13 @@ function setup()
 
     sphere = world.add({
         type: "sphere",
-        size:[10],
+        size:[20],
         pos:[0,50,0],
         density:1,
         move:true
     });
-     
-
-    geos['sphere'] = new THREE.BufferGeometry().fromGeometry( new THREE.SphereGeometry(10,30,10));
+    bodys.push(sphere);
+    geos['sphere'] = new THREE.BufferGeometry().fromGeometry( new THREE.SphereGeometry(20,30,10));
     geos['box'] = new THREE.BufferGeometry().fromGeometry( new THREE.BoxGeometry(1000,1,1000));
 
 
@@ -103,9 +103,40 @@ function setup()
     scene.add(ground);
 
     //sphere.linearVelocity.x 
+
+    
+    var banana_loop = [100,10,0,-100,10,0,0,10,100,0,10,-100];
+    for(var i = 0; i < banana_loop.length;i=i+3)
+    {
+        var x = banana_loop[i];
+        var y = banana_loop[i+1];
+        var z = banana_loop[i+2];
+        createBanana(x,y,z);console.log("BANANA:",x,y,z);
+    }
+
+    window.addEventListener( 'resize', onWindowResize, false );
+
     loop();
 }
 
+function createBanana(x,y,z)
+{
+    gltfLoader.load('banana.gltf', (gltf) => {
+        const root = gltf.scene;
+        root.scale.set(2,2,2);
+        root.position.set(x,y,z);
+        console.log("ROOT: ",root);
+        scene.add(root);
+      });
+}
+
+function onWindowResize() {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
 
 function setupScene()
 {
@@ -137,28 +168,28 @@ function loop()
     {
         if(event.key == 'w')
         {
-            if(!(sphere.linearVelocity.x >= 20))
+            if(!(sphere.linearVelocity.x >= 40))
             {
                 sphere.linearVelocity.x +=.01;
             }
         }
         if(event.key == 's')
         {
-            if(!(sphere.linearVelocity.x <= -20))
+            if(!(sphere.linearVelocity.x <= -40))
             {
                 sphere.linearVelocity.x -=.01;
             }
         }
         if(event.key == 'a')
         {
-             if(!(sphere.linearVelocity.z <= -20))
+             if(!(sphere.linearVelocity.z <= -40))
             {
                 sphere.linearVelocity.z -=.01;
             }
         }
         if(event.key == 'd')
         {
-            if(!(sphere.linearVelocity.z >= 20))
+            if(!(sphere.linearVelocity.z >= 40))
             {
                sphere.linearVelocity.z +=.01;
             }
@@ -172,11 +203,9 @@ function loop()
     
    let  x, y, z, mesh, body
 
-
-    body = sphere;
     for(let i = 0; i < meshes.length; i++)
     {
-
+        body = bodys[i];
       //  console.log("In function LOOP:: ",meshes[i],"    ",i,"  length is ", meshes.length);
         mesh = meshes[i];
 
@@ -210,8 +239,6 @@ function loop()
     }
     renderer.render(scene,camera);
     requestAnimationFrame(loop);
-
-    
 }
 
 //copied from test.js warrents a further look into these two 
