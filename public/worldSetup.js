@@ -137,30 +137,32 @@ function loop()
     {
         if(event.key == 'w')
         {
-            if(!(sphere.linearVelocity.x >= 20))
+           
+            if(!(sphere.linearVelocity.x >= 50))
             {
-                sphere.linearVelocity.x +=.01;
+                 sphere.linearVelocity.x +=.1;
             }
         }
         if(event.key == 's')
         {
-            if(!(sphere.linearVelocity.x <= -20))
+            if(!(sphere.linearVelocity.x <= -50))
             {
-                sphere.linearVelocity.x -=.01;
+                 sphere.linearVelocity.x -=.1;
             }
+            //sphere.linearVelocity.x -=1;
         }
         if(event.key == 'a')
         {
-             if(!(sphere.linearVelocity.z <= -20))
+             if(!(sphere.linearVelocity.z <= -50))
             {
-                sphere.linearVelocity.z -=.01;
+                sphere.linearVelocity.z -=.1;
             }
         }
         if(event.key == 'd')
         {
-            if(!(sphere.linearVelocity.z >= 20))
+            if(!(sphere.linearVelocity.z >= 50))
             {
-               sphere.linearVelocity.z +=.01;
+               sphere.linearVelocity.z +=.1;
             }
         }
 
