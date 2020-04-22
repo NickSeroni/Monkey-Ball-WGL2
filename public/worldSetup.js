@@ -198,6 +198,14 @@ function loop()
                sphere.linearVelocity.z +=.1;
             }
         }
+        if(event.key == 'x')
+        {
+
+            if(!(sphere.linearVelocity.y >= -40))
+            {
+               sphere.linearVelocity.y -=.1;
+            };
+        }   
 
     });
 
