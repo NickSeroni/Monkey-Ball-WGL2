@@ -8,6 +8,7 @@ var world = null;
 var box= null;
 var sphere = null;
 var monkey_ball = null;
+var skybox = null;
 var camera, scene, light, renderer, canvas, controls,infos;
 var body = null,meshes = [],bodys = [];
 var antialias = true;
@@ -19,30 +20,24 @@ const gltfLoader = new GLTFLoader();
 //sets up geometry and calls other setters
 function setup()
 {
-
-    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 5000 );
-    camera.position.set( 0, 20, 100 );
+    camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 45, 30000 );
+    camera.position.set( -900, 300, 0 );
 
     
     infos = document.getElementById("info");
     canvas = document.getElementById("canvas");
 
-    controls = new OrbitControls( camera, canvas );
-    controls.target.set(0, 20, 0);
-    controls.update();
-
-    scene = new THREE.Scene();
-
     renderer = new THREE.WebGLRenderer({ canvas:canvas, precision: "mediump", antialias:antialias });
     renderer.setSize( window.innerWidth, window.innerHeight );
 
-    setupScene();
+    controls = new OrbitControls( camera, canvas );
+    controls.update();
+    controls.maxDistance = 2000;
+    
+    scene = new THREE.Scene();
 
-    var buffgeoBack = new THREE.BufferGeometry();
-    buffgeoBack.fromGeometry( new THREE.IcosahedronGeometry(3000,2) );
-    var back = new THREE.Mesh( buffgeoBack, new THREE.MeshBasicMaterial( { map:gradTexture([[0.75,0.6,0.4,0.25], ['#1B1D1E','#3D4143','#72797D', '#b0babf']]), side:THREE.BackSide, depthWrite: false, fog:false }  ));
-    //back.geometry.applyMatrix(new THREE.Matrix4().makeRotationZ(15*ToRad));
-    scene.add(back);
+    createSkyBox();
+    setupScene();
 
     world = new OIMO.World({
         timestep:1/60,
@@ -138,12 +133,37 @@ function onWindowResize() {
 
 }
 
+function createSkyBox() {
+    let matArray = [];
+    let texture_front = new THREE.TextureLoader().load('images/skybox_ft.jpg');
+    let texture_back = new THREE.TextureLoader().load('images/skybox_bk.jpg');
+    let texture_bottom = new THREE.TextureLoader().load('images/skybox_dn.jpg');
+    let texture_top = new THREE.TextureLoader().load('images/skybox_up.jpg');
+    let texture_left = new THREE.TextureLoader().load('images/skybox_lf.jpg');
+    let texture_right = new THREE.TextureLoader().load('images/skybox_rt.jpg');
+
+    matArray.push(new THREE.MeshBasicMaterial({map: texture_front}));
+    matArray.push(new THREE.MeshBasicMaterial({map: texture_back}));
+    matArray.push(new THREE.MeshBasicMaterial({map: texture_top}));
+    matArray.push(new THREE.MeshBasicMaterial({map: texture_bottom}));
+    matArray.push(new THREE.MeshBasicMaterial({map: texture_right}));
+    matArray.push(new THREE.MeshBasicMaterial({map: texture_left}));
+
+    for(let i = 0; i < 6; i++)
+    {
+        matArray[i].side = THREE.BackSide;
+    }
+    let skyBoxGeometry = new THREE.BoxGeometry(10000,10000,10000);
+    skybox = new THREE.Mesh(skyBoxGeometry,matArray);
+    scene.add(skybox);
+}
+
 function setupScene()
 {
     
     scene.add( new THREE.AmbientLight( 0x3D4143 ) );
     light = new THREE.DirectionalLight( 0xffffff , 1.4);
-    light.position.set( 300, 1000, 500 );
+    light.position.set( 700, 1400, -900 );
     light.target.position.set( 0, 0, 0 );
     light.castShadow = true;
 
@@ -158,7 +178,6 @@ function setupScene()
 
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;//THREE.BasicShadowMap;
-
 }
 
 function loop()
@@ -209,7 +228,7 @@ function loop()
 
     });
 
-    console.log("the velocity is ", sphere.linearVelocity.x)
+    //console.log("the velocity is ", sphere.linearVelocity.x)
     var prior_pos = sphere.getPosition()
     world.step();
     
@@ -243,7 +262,7 @@ function loop()
 
     if(prior_pos != sphere.getPosition)
     {
-        console.log(sphere.getPosition());
+        //console.log(sphere.getPosition());
     }
     else
     {
