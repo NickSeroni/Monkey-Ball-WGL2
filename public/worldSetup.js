@@ -53,7 +53,8 @@ function setup()
         size: [1000,1,1000],
         pos: [0,0,0],
         density: 1,
-        move: false 
+        rot: [0,0,0],
+        move: true 
     });
 
     sphere = world.add({
@@ -63,6 +64,7 @@ function setup()
         density:1,
         move:true
     });
+    bodys.push(box);
     bodys.push(sphere);
     geos['sphere'] = new THREE.BufferGeometry().fromGeometry( new THREE.SphereGeometry(20,30,10));
     geos['box'] = new THREE.BufferGeometry().fromGeometry( new THREE.BoxGeometry(1000,1,1000));
@@ -83,6 +85,8 @@ function setup()
    var ground = new THREE.Mesh( geos.box, mats.box );
    ground.position.set(0,0,0);
 
+   meshes.push(ground);
+
     
     meshes.push (new THREE.Mesh( geos.sphere, mats.sph ));
   //  meshes.push (new THREE.Mesh( geos.box, mats.box ))
@@ -94,8 +98,8 @@ function setup()
     meshes[0].receiveShadow = true;
     //meshes[1].receiveShadow = true;
 
-    scene.add( meshes[0]);
-    scene.add(ground);
+    scene.add( meshes[1]);
+    scene.add(meshes[0]);
 
     //sphere.linearVelocity.x 
 
@@ -182,6 +186,8 @@ function setupScene()
 
 function loop()
 {
+    box.position.set(0,0,0);
+    box.linearVelocity.set(0,0,0);
     
     document.addEventListener('keydown', function(event) 
     {
@@ -189,29 +195,47 @@ function loop()
         {
             if(!(sphere.linearVelocity.x >= 40))
             {
-                sphere.linearVelocity.x +=.01;
+                //sphere.linearVelocity.x +=.01;
             }
+            
+            //console.log("Old Rotation: " + box.getQuaternion());
+
+            if (box.getQuaternion() )
+            box.angularVelocity.z -= .01;
+            console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 's')
         {
             if(!(sphere.linearVelocity.x <= -40))
             {
-                sphere.linearVelocity.x -=.01;
+                //sphere.linearVelocity.x -=.01;
             }
+
+            if (box.getQuaternion() )
+            box.angularVelocity.z += .01;
+            console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'a')
         {
              if(!(sphere.linearVelocity.z <= -40))
             {
-                sphere.linearVelocity.z -=.01;
+                //sphere.linearVelocity.z -=.01;
             }
+
+            if (box.getQuaternion() )
+            box.angularVelocity.x -= .01;
+            console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'd')
         {
             if(!(sphere.linearVelocity.z >= 40))
             {
-               sphere.linearVelocity.z +=.01;
+               //sphere.linearVelocity.z +=.01;
             }
+
+            if (box.getQuaternion() )
+            box.angularVelocity.x += .01;
+            console.log("New Rotation: " + box.getQuaternion());
         }
 
     });
@@ -247,6 +271,8 @@ function loop()
             }
         }
     }
+
+    box.angularVelocity.set(0,0,0);
 
     if(prior_pos != sphere.getPosition)
     {
