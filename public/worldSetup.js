@@ -4,7 +4,6 @@ import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/t
 import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/loaders/GLTFLoader.js';
 import * as glMatrix from '/gl-matrix-min.js';
 
-
 var world = null;
 var box= null;
 var sphere = null;
@@ -306,10 +305,10 @@ function loop()
     camera.position.set(sphere.position.x -300, sphere.position.y+65, sphere.position.z);
 
     CamTarget.setX(sphere.position.x);
-    CamTarget.setX(sphere.position.y);
-    CamTarget.setX(sphere.position.z);
+    CamTarget.setY(sphere.position.y);
+    CamTarget.setZ(sphere.position.z);
 
-    camera.target = CamTarget
+    camera.target = CamTarget;
     //controls.update();
 //    renderer.setSize( window.innerWidth, window.innerHeight );
 
