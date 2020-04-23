@@ -78,8 +78,7 @@ function setup()
 
 
    // bodys[i] = world.add({type:'box', size:[w,h,d], pos:[x,y,z], move:true, world:world});
-   //eshs[i] = new THREE.Mesh( geos.box, mats.box );
-
+   // meshs[i] = new THREE.Mesh( geos.box, mats.box );
 
    // var ground0 = world.add({size:[3, 40, 390], pos:[-180,20,0], world:world});
    var ground = new THREE.Mesh( geos.box, mats.box );
@@ -255,7 +254,7 @@ function loop()
         }   
 
     });
-
+ 
     //console.log("the velocity is ", sphere.linearVelocity.x)
     var prior_pos = sphere.getPosition()
     world.step();
@@ -298,8 +297,16 @@ function loop()
     {
         process.exit(1);
     }
+    console.log(sphere.pos.x, sphere.pos.y , sphere.pos.z ,"    Are Sphere positions");
+    console.log(sphere.position.x -100, sphere.position.y+25, sphere.position.z ,"    Are the camera positions");
+    camera.position.set(sphere.position.x -100, sphere.position.y+25, sphere.position.z);
+    //controls.update();
+//    renderer.setSize( window.innerWidth, window.innerHeight );
+
+
     renderer.render(scene,camera);
     requestAnimationFrame(loop);
+
 }
 
 //copied from test.js warrents a further look into these two 
