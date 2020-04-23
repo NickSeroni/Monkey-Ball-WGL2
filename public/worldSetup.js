@@ -40,9 +40,9 @@ function setup()
     setupScene();
 
     world = new OIMO.World({
-        timestep:1/60,
-        iterations: 8,
-        broadphase: 2,
+        timestep:1/20,
+        iterations: 4,
+        broadphase: 0,
         worldscale: 1,
         info: true,
         gravity: [0,-9.8,0]
@@ -52,7 +52,7 @@ function setup()
         type: "box",
         size: [1000,1,1000],
         pos: [0,0,0],
-        density: 1,
+        density: 1000,
         rot: [0,0,0],
         move: true 
     });
@@ -61,7 +61,7 @@ function setup()
         type: "sphere",
         size:[20],
         pos:[0,50,0],
-        density:1,
+        density:100,
         move:true
     });
     bodys.push(box);
@@ -193,49 +193,35 @@ function loop()
     {
         if(event.key == 'w')
         {
-            if(!(sphere.linearVelocity.x >= 40))
+            if (box.angularVelocity.z > -.2)
             {
-                //sphere.linearVelocity.x +=.01;
+                box.angularVelocity.z -= .06;
             }
-            
-            //console.log("Old Rotation: " + box.getQuaternion());
-
-            if (box.getQuaternion() )
-            box.angularVelocity.z -= .01;
-            console.log("New Rotation: " + box.getQuaternion());
+            //console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 's')
         {
-            if(!(sphere.linearVelocity.x <= -40))
+            if (box.angularVelocity.z < .2)
             {
-                //sphere.linearVelocity.x -=.01;
+                box.angularVelocity.z += .06;
             }
-
-            if (box.getQuaternion() )
-            box.angularVelocity.z += .01;
-            console.log("New Rotation: " + box.getQuaternion());
+            //console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'a')
         {
-             if(!(sphere.linearVelocity.z <= -40))
+            if (box.angularVelocity.x > -.2)
             {
-                //sphere.linearVelocity.z -=.01;
+                box.angularVelocity.x -= .06;
             }
-
-            if (box.getQuaternion() )
-            box.angularVelocity.x -= .01;
-            console.log("New Rotation: " + box.getQuaternion());
+            //console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'd')
         {
-            if(!(sphere.linearVelocity.z >= 40))
+            if (box.angularVelocity.x < .2)
             {
-               //sphere.linearVelocity.z +=.01;
+                box.angularVelocity.x += .06;
             }
-
-            if (box.getQuaternion() )
-            box.angularVelocity.x += .01;
-            console.log("New Rotation: " + box.getQuaternion());
+            //console.log("New Rotation: " + box.getQuaternion());
         }
 
     });
@@ -272,7 +258,23 @@ function loop()
         }
     }
 
-    box.angularVelocity.set(0,0,0);
+    //Smoothly decrease the rotation of the ground
+    if (box.angularVelocity.z > 0)
+    {
+        box.angularVelocity.z -= .003;
+    }
+    if (box.angularVelocity.z < 0)
+    {
+        box.angularVelocity.z += .003;
+    }
+    if (box.angularVelocity.x > 0)
+    {
+        box.angularVelocity.x -= .003;
+    }
+    if (box.angularVelocity.x < 0)
+    {
+        box.angularVelocity.x += .003;
+    }
 
     if(prior_pos != sphere.getPosition)
     {
