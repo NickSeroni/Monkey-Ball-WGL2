@@ -4,6 +4,7 @@ import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/t
 import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/loaders/GLTFLoader.js';
 import * as glMatrix from '/gl-matrix-min.js';
 
+
 var world = null;
 var box= null;
 var sphere = null;
@@ -16,6 +17,8 @@ var materialType = 'MeshBasicMaterial';
 var geos = {};
 var mats = {};
 const gltfLoader = new GLTFLoader();
+
+var CamTarget = {};
 
 //sets up geometry and calls other setters
 function setup()
@@ -64,6 +67,9 @@ function setup()
         density:100,
         move:true
     });
+
+    CamTarget = new THREE.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
+
     bodys.push(box);
     bodys.push(sphere);
     geos['sphere'] = new THREE.BufferGeometry().fromGeometry( new THREE.SphereGeometry(20,30,10));
@@ -294,9 +300,16 @@ function loop()
     {
         process.exit(1);
     }
+
     console.log(sphere.pos.x, sphere.pos.y , sphere.pos.z ,"    Are Sphere positions");
     console.log(sphere.position.x -100, sphere.position.y+25, sphere.position.z ,"    Are the camera positions");
-    camera.position.set(sphere.position.x -100, sphere.position.y+25, sphere.position.z);
+    camera.position.set(sphere.position.x -300, sphere.position.y+65, sphere.position.z);
+
+    CamTarget.setX(sphere.position.x);
+    CamTarget.setX(sphere.position.y);
+    CamTarget.setX(sphere.position.z);
+
+    camera.target = CamTarget
     //controls.update();
 //    renderer.setSize( window.innerWidth, window.innerHeight );
 
