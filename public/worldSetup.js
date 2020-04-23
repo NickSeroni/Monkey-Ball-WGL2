@@ -34,7 +34,7 @@ function setup()
 
     controls = new OrbitControls( camera, canvas );
     controls.update();
-    controls.maxDistance = 2000;
+    controls.maxDistance = 300;
     
     scene = new THREE.Scene();
 
@@ -302,13 +302,15 @@ function loop()
 
     console.log(sphere.pos.x, sphere.pos.y , sphere.pos.z ,"    Are Sphere positions");
     console.log(sphere.position.x -100, sphere.position.y+25, sphere.position.z ,"    Are the camera positions");
-    camera.position.set(sphere.position.x -300, sphere.position.y+65, sphere.position.z);
+    //camera.position.set(sphere.position.x -300, sphere.position.y+65, sphere.position.z);
 
     CamTarget.setX(sphere.position.x);
     CamTarget.setY(sphere.position.y);
     CamTarget.setZ(sphere.position.z);
 
-    camera.target = CamTarget;
+    controls.target = CamTarget;
+    controls.update();
+    //camera.target = CamTarget;
     //controls.update();
 //    renderer.setSize( window.innerWidth, window.innerHeight );
 
