@@ -9,16 +9,18 @@ var box= null;
 var sphere = null;
 var monkey_ball = null;
 var skybox = null;
-var camera, scene, light, renderer, canvas, controls,infos;
+var camera, scene, light, renderer, canvas, controls,infos, banana_loop;
 var body = null,meshes = [],bodys = [];
 var antialias = true;
 var materialType = 'MeshBasicMaterial';
 var geos = {};
 var mats = {};
+var BananaCluster = [];
+var BananasCollected = 0; 
 const gltfLoader = new GLTFLoader();
 
 //sets up geometry and calls other setters
-function setup()
+async function setup()
 {
     camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 45, 30000 );
     camera.position.set( -900, 300, 0 );
@@ -33,6 +35,7 @@ function setup()
     controls = new OrbitControls( camera, canvas );
     controls.update();
     controls.maxDistance = 2000;
+    OrbitControls.enableZoom = false;
     
     scene = new THREE.Scene();
 
@@ -101,15 +104,19 @@ function setup()
     scene.add(meshes[0]);
 
     //sphere.linearVelocity.x 
-
+  
     
-    var banana_loop = [100,10,0,-100,10,0,0,10,100,0,10,-100];
-    for(var i = 0; i < banana_loop.length;i=i+3)
+    banana_loop = [100,10,0,-100,10,0,0,10,100,0,10,-100];  
+    let count = 0;
+    for(var i = 0; i < banana_loop.length;i=i+3) 
     {
         var x = banana_loop[i];
         var y = banana_loop[i+1];
         var z = banana_loop[i+2];
-        createBanana(x,y,z);console.log("BANANA:",x,y,z);
+       BananaCluster.push( await createBanana(x,y,z,count));
+
+        console.log("BANANA:",x,y,z);
+        count++;
     }
 
     window.addEventListener( 'resize', onWindowResize, false );
@@ -117,16 +124,47 @@ function setup()
     loop();
 }
 
-function createBanana(x,y,z)
+function createBanana(x,y,z,count)
 {
+    return new Promise((resolve,reject)=>{
+   // let retval= [x,y,z];
     gltfLoader.load('banana.gltf', (gltf) => {
-        const root = gltf.scene;
+        var root = gltf.scene;
         root.scale.set(2,2,2);
         root.position.set(x,y,z);
+        root.name== "Banana"+count;
         console.log("ROOT: ",root);
+        console.log(root,"  inside of GTLF loader")
         scene.add(root);
+        console.log(scene.getObjectByName("Banana"+count));
+        resolve(root);
       });
+     
+    });
+     
 }
+
+function BananaCounter()
+{
+    
+    // root = gltf.scene;
+    // root.scale.set(2,2,2);
+    // root.position.set(x,y,z);
+
+    console.log(BananaCluster,"     BananaCluster");
+    for(let i = 0; i< BananaCluster.length; i++)
+    {
+
+        console.log(BananaCluster,"                ", sphere.position.x );
+        if(BananaCluster[i].position.x - sphere.position.x <= 0 && BananaCluster[i].position.x -sphere.position.x >= sphere.size)
+        {
+            console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            scene.remove(BananaCluster[i]);
+            BananasCollected++;
+        }
+    }
+}
+
 
 function onWindowResize() {
 
@@ -156,6 +194,7 @@ function createSkyBox() {
     {
         matArray[i].side = THREE.BackSide;
     }
+
     let skyBoxGeometry = new THREE.BoxGeometry(10000,10000,10000);
     skybox = new THREE.Mesh(skyBoxGeometry,matArray);
     scene.add(skybox);
@@ -294,12 +333,14 @@ function loop()
     {
         process.exit(1);
     }
-    console.log(sphere.pos.x, sphere.pos.y , sphere.pos.z ,"    Are Sphere positions");
-    console.log(sphere.position.x -100, sphere.position.y+25, sphere.position.z ,"    Are the camera positions");
-    camera.position.set(sphere.position.x -100, sphere.position.y+25, sphere.position.z);
+    //console.log(sphere.pos.x, sphere.pos.y , sphere.pos.z ,"    Are Sphere positions");
+    //console.log(sphere.position.x -100, sphere.position.y+25, sphere.position.z ,"    Are the camera positions");
+    camera.position.set(sphere.position.x -300, sphere.position.y+40, sphere.position.z);
     //controls.update();
 //    renderer.setSize( window.innerWidth, window.innerHeight );
 
+    BananaCounter();
+    console.log(BananasCollected,"   How many Bananas have I collected?");
 
     renderer.render(scene,camera);
     requestAnimationFrame(loop);
