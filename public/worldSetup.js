@@ -65,6 +65,7 @@ function setup()
     meshes.push (new THREE.Mesh( geos.sphere, mats.sph ));
     meshes[0].position.set(0,50,0);
     meshes[0].receiveShadow = true;
+    meshes[1].castShadow = true;
 
     scene.add( meshes[1]);
     scene.add(meshes[0]);

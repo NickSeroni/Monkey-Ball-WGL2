@@ -108,6 +108,11 @@ function createBanana(x,y,z,name,scene,bananaArray)
         banana.scale.set(2,2,2);
         banana.position.set(x,y,z);
         banana.name = name;
+        banana.traverse( function( node ) {
+
+            if ( node.isMesh ) { node.castShadow = true; }
+    
+        } );
         console.log("BANANA: ",banana);
         scene.add(banana);
         bananaArray.push(banana);
