@@ -33,6 +33,7 @@ function setup()
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
 
     controls = new OrbitControls( camera, canvas );
     controls.update();
@@ -57,6 +58,7 @@ function setup()
     mats['box']    = new THREE[materialType]( {shininess: 10, map: basicTexture(2), name:'box' } );
 
     var ground = new THREE.Mesh( geos.box, mats.box );
+    console.log("GROUND:", ground);
     ground.position.set(0,0,0);
     meshes.push(ground);
     

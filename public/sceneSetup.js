@@ -57,13 +57,14 @@ function createSkyBox(scene) {
     }
     let skyBoxGeometry = new THREE.BoxGeometry(10000,10000,10000);
     let skybox = new THREE.Mesh(skyBoxGeometry,matArray);
+    skybox.rotateY( Math.PI );
     scene.add(skybox);
 }
 
 function lightSetup()
 {
     let light = new THREE.DirectionalLight( 0xffffff , 1.4);
-    light.position.set( 700, 1400, -900 );
+    light.position.set( -700, 1000, 900 );
     light.target.position.set( 0, 0, 0 );
     light.castShadow = true;
 
