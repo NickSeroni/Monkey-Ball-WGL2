@@ -72,7 +72,20 @@ function setup()
 
     window.addEventListener( 'resize', onWindowResize, false );
 
+    GamepadSetup();
+
     loop();
+}
+
+function GamepadSetup()
+{
+
+    window.addEventListener("gamepadconnected", function(e) {
+        console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+          e.gamepad.index, e.gamepad.id,
+          e.gamepad.buttons.length, e.gamepad.axes.length);
+      });
+
 }
 
 function onWindowResize() {
@@ -137,6 +150,8 @@ function loop()
 
     console.log(sphere.pos.x, sphere.pos.y , sphere.pos.z ,"    Are Sphere positions");
     console.log(sphere.position.x -100, sphere.position.y+25, sphere.position.z ,"    Are the camera positions");
+
+    //console.log(navigator.getGamepads());
 
     CamTarget.setX(sphere.position.x);
     CamTarget.setY(sphere.position.y);
