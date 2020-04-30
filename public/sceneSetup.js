@@ -101,7 +101,7 @@ function basicTexture(n){
 }
 
 const gltfLoader = new GLTFLoader();
-function createBanana(x,y,z,name,scene,bananaArray)
+function createBanana(x,y,z,name,scene,bananaArray,Physical)
 {
     let banana;
     console.log("SCENE");
@@ -117,8 +117,13 @@ function createBanana(x,y,z,name,scene,bananaArray)
         });
         console.log("BANANA: ",banana);
         scene.add(banana);
+        let obj ={
+            banana: banana,
+            oimo: Physical
+        };
+        bananaArray.push(obj);
       });
-    return banana;
+    //return banana;
 }
 
 function createBananaArray(scene)
@@ -143,11 +148,8 @@ function createBananaArray(scene)
             move:false
         });
         
-        let obj ={
-            banana: createBanana(x,y,z,name,scene,bananaArray),
-            oimo: Physical
-        };
-        bananaArray.push(obj);
+        createBanana(x,y,z,name,scene,bananaArray,Physical);
+        
        
         
         counter++;
