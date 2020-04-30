@@ -5,6 +5,8 @@ import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/thre
 import * as glMatrix from '/gl-matrix-min.js';
 import { oimoObjects, createSkyBox, lightSetup, basicTexture,createBananaArray} from '/sceneSetup.js';
 
+var paused = false;
+
 var world = null;
 var box= null;
 var sphere = null;
@@ -124,69 +126,72 @@ function onWindowResize() {
 
 function loop()
 {
-    box.position.set(0,0,0);
-    box.linearVelocity.set(0,0,0);
     keyDown();
- 
-    var prior_pos = sphere.getPosition()
-    world.step();
-    
-    let x, y, z, mesh, body;
 
-    for(let i = 0; i < meshes.length; i++)
+    if (!paused)
     {
-        body = bodys[i];
-        mesh = meshes[i];
+        box.position.set(0,0,0);
+        box.linearVelocity.set(0,0,0);
+    
+        var prior_pos = sphere.getPosition()
+        world.step();
+        
+        let x, y, z, mesh, body;
 
-        if(!body.sleeping){
+        for(let i = 0; i < meshes.length; i++)
+        {
+            body = bodys[i];
+            mesh = meshes[i];
 
-            mesh.position.copy(body.getPosition());
-            mesh.quaternion.copy(body.getQuaternion());
-            if(mesh.position.y<-400){
-                body.resetPosition(0,0,0);
+            if(!body.sleeping){
+
+                mesh.position.copy(body.getPosition());
+                mesh.quaternion.copy(body.getQuaternion());
+                if(mesh.position.y<-400){
+                    body.resetPosition(0,0,0);
+                }
             }
         }
-    }
 
-    //Smoothly decrease the rotation of the ground
-    if (box.angularVelocity.z > 0)
-    {
-        box.angularVelocity.z -= .003;
-    }
-    if (box.angularVelocity.z < 0)
-    {
-        box.angularVelocity.z += .003;
-    }
-    if (box.angularVelocity.x > 0)
-    {
-        box.angularVelocity.x -= .003;
-    }
-    if (box.angularVelocity.x < 0)
-    {
-        box.angularVelocity.x += .003;
-    }
+        //Smoothly decrease the rotation of the ground
+        if (box.angularVelocity.z > 0)
+        {
+            box.angularVelocity.z -= .003;
+        }
+        if (box.angularVelocity.z < 0)
+        {
+            box.angularVelocity.z += .003;
+        }
+        if (box.angularVelocity.x > 0)
+        {
+            box.angularVelocity.x -= .003;
+        }
+        if (box.angularVelocity.x < 0)
+        {
+            box.angularVelocity.x += .003;
+        }
 
-    if(prior_pos != sphere.getPosition)
-    {
-        //console.log(sphere.getPosition());
+        if(prior_pos != sphere.getPosition)
+        {
+            //console.log(sphere.getPosition());
+        }
+        else
+        {
+            process.exit(1);
+        }
+
+        // console.log(sphere.pos.x, sphere.pos.y , sphere.pos.z ,"    Are Sphere positions");
+        // console.log(sphere.position.x -100, sphere.position.y+25, sphere.position.z ,"    Are the camera positions");
+
+        //console.log(navigator.getGamepads());
+        BananaCounter();
+        CamTarget.setX(sphere.position.x);
+        CamTarget.setY(sphere.position.y);
+        CamTarget.setZ(sphere.position.z);
+
+        controls.target = CamTarget;
+        controls.update();
     }
-    else
-    {
-        process.exit(1);
-    }
-
-    // console.log(sphere.pos.x, sphere.pos.y , sphere.pos.z ,"    Are Sphere positions");
-    // console.log(sphere.position.x -100, sphere.position.y+25, sphere.position.z ,"    Are the camera positions");
-
-    //console.log(navigator.getGamepads());
-    BananaCounter();
-    CamTarget.setX(sphere.position.x);
-    CamTarget.setY(sphere.position.y);
-    CamTarget.setZ(sphere.position.z);
-
-    controls.target = CamTarget;
-    controls.update();
-
     renderer.render(scene,camera);
     requestAnimationFrame(loop);
 
@@ -238,6 +243,11 @@ function keyDown()
             {
                sphere.linearVelocity.y -=.1;
             };
+        }   
+        if(event.key == 'p')
+        {
+            //allows us to pause the game
+            paused = !paused;
         }   
 
     });
