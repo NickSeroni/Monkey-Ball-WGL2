@@ -4,16 +4,18 @@ import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/t
 import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/loaders/GLTFLoader.js';
 
 
+let world = new OIMO.World({
+    timestep:1/20,
+    iterations: 4,
+    broadphase: 0,
+    worldscale: 1,
+    info: true,
+    gravity: [0,-9.8,0]
+});
+
 function oimoObjects()
 {
-    let world = new OIMO.World({
-        timestep:1/20,
-        iterations: 4,
-        broadphase: 0,
-        worldscale: 1,
-        info: true,
-        gravity: [0,-9.8,0]
-    });
+    
 
     let box = world.add({
         type: "box",
@@ -112,10 +114,9 @@ function createBanana(x,y,z,name,scene,bananaArray)
 
             if ( node.isMesh ) { node.castShadow = true; }
     
-        } );
+        });
         console.log("BANANA: ",banana);
         scene.add(banana);
-        bananaArray.push(banana);
       });
     return banana;
 }
@@ -126,13 +127,29 @@ function createBananaArray(scene)
     var banana_coords = [100,10,0,-100,10,0,0,10,100,0,10,-100];
     let counter = 0;
     let name = "";
+    let retval =[];
+   
     for(var i = 0; i < banana_coords.length;i=i+3)
     {
         var x = banana_coords[i];
         var y = banana_coords[i+1];
         var z = banana_coords[i+2];
         name = "Banana"+counter;
-        createBanana(x,y,z,name,scene,bananaArray); 
+        let Physical = world.add({
+            type: "box",
+            size:[1,1,2],
+            pos:[x,y,z],
+            density:1,
+            move:false
+        });
+        
+        let obj ={
+            banana: createBanana(x,y,z,name,scene,bananaArray),
+            oimo: Physical
+        };
+        bananaArray.push(obj);
+       
+        
         counter++;
     }
     return bananaArray;

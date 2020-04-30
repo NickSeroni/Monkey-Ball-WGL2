@@ -96,20 +96,17 @@ function GamepadSetup()
 function BananaCounter()
 {
     
-    // root = gltf.scene;
-    // root.scale.set(2,2,2);
-    // root.position.set(x,y,z);
-
-    console.log(BananaCluster,"     BananaCluster");
-    for(let i = 0; i< BananaCluster.length; i++)
+    console.log(bananaArray,"     BananaCluster");
+    for(let i = 0; i< bananaArray.length; i++)
     {
-
-        console.log(BananaCluster,"                ", sphere.position.x );
-        if(BananaCluster[i].position.x - sphere.position.x <= 0 && BananaCluster[i].position.x -sphere.position.x >= sphere.size)
+        console.log(bananaArray,"                ", sphere.position.x );
+        if(world.getContact(bananaArray[i].oimo, sphere));
         {
-            console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            scene.remove(BananaCluster[i]);
+        //     console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        //     scene.remove(BananaCluster[i].banana);
+        //     scene.remove(BananaCluster[i].oimo);
             BananasCollected++;
+            //system("pause");
         }
     }
 }
@@ -179,7 +176,7 @@ function loop()
     console.log(sphere.position.x -100, sphere.position.y+25, sphere.position.z ,"    Are the camera positions");
 
     //console.log(navigator.getGamepads());
-
+    BananaCounter();
     CamTarget.setX(sphere.position.x);
     CamTarget.setY(sphere.position.y);
     CamTarget.setZ(sphere.position.z);
