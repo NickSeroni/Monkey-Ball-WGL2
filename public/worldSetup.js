@@ -20,6 +20,9 @@ var BananaCluster = [];
 var BananasCollected = 0; 
 const gltfLoader = new GLTFLoader();
 
+//the maximum degrees that the level can be tilted
+var maxTilt = 15;
+
 var CamTarget = {};
 
 //sets up geometry and calls other setters
@@ -96,10 +99,10 @@ function GamepadSetup()
 function BananaCounter()
 {
     
-    console.log(bananaArray,"     BananaCluster");
+    //console.log(bananaArray,"     BananaCluster");
     for(let i = 0; i< bananaArray.length; i++)
     {
-        console.log(bananaArray,"                ", sphere.position.x );
+        //console.log(bananaArray,"                ", sphere.position.x );
         if(world.getContact(bananaArray[i].oimo, sphere));
         {
         //     console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -172,8 +175,8 @@ function loop()
         process.exit(1);
     }
 
-    console.log(sphere.pos.x, sphere.pos.y , sphere.pos.z ,"    Are Sphere positions");
-    console.log(sphere.position.x -100, sphere.position.y+25, sphere.position.z ,"    Are the camera positions");
+    // console.log(sphere.pos.x, sphere.pos.y , sphere.pos.z ,"    Are Sphere positions");
+    // console.log(sphere.position.x -100, sphere.position.y+25, sphere.position.z ,"    Are the camera positions");
 
     //console.log(navigator.getGamepads());
     BananaCounter();
@@ -195,12 +198,12 @@ function keyDown()
     {
         if(event.key == 'w')
         {
-
             if (box.angularVelocity.z > -.2)
             {
                 box.angularVelocity.z -= .06;
             }
-            //console.log("New Rotation: " + box.getQuaternion());
+            console.log("New Rotation: " + box.getQuaternion());
+
         }
         if(event.key == 's')
         {
@@ -209,7 +212,7 @@ function keyDown()
             {
                 box.angularVelocity.z += .06;
             }
-            //console.log("New Rotation: " + box.getQuaternion());
+            console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'a')
         {
@@ -218,7 +221,7 @@ function keyDown()
                 box.angularVelocity.x -= .06;
 
             }
-            //console.log("New Rotation: " + box.getQuaternion());
+            console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'd')
         {
@@ -226,7 +229,7 @@ function keyDown()
             {
                 box.angularVelocity.x += .06;
             }
-            //console.log("New Rotation: " + box.getQuaternion());
+            console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'x')
         {
