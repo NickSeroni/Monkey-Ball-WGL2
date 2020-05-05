@@ -23,7 +23,8 @@ var BananasCollected = 0;
 const gltfLoader = new GLTFLoader();
 
 //the maximum degrees that the level can be tilted
-var maxTilt = 15;
+var maxTilt = .10;
+var userInput = false;
 
 var CamTarget = {};
 
@@ -126,6 +127,7 @@ function onWindowResize() {
 
 function loop()
 {
+    userInput = false;
     keyDown();
 
     if (!paused)
@@ -153,22 +155,55 @@ function loop()
             }
         }
 
-        //Smoothly decrease the rotation of the ground
-        if (box.angularVelocity.z > 0)
+        if (userInput == false)
         {
-            box.angularVelocity.z -= .003;
-        }
-        if (box.angularVelocity.z < 0)
-        {
-            box.angularVelocity.z += .003;
-        }
-        if (box.angularVelocity.x > 0)
-        {
-            box.angularVelocity.x -= .003;
-        }
-        if (box.angularVelocity.x < 0)
-        {
-            box.angularVelocity.x += .003;
+            //Smoothly decrease the rotation of the ground
+            let alignment = box.getQuaternion();
+
+            if (alignment["z"] > 0)
+            {
+                if (alignment["z"] < -box.angularVelocity.z)
+                {
+                    //box.angularVelocity.z = 0;
+                }
+                else
+                {
+                    box.angularVelocity.z -= .004;
+                }
+            }
+            if (alignment["z"] < 0)
+            {
+                if (alignment["z"] > -box.angularVelocity.z)
+                {
+                    //box.angularVelocity.z = 0;
+                }
+                else
+                {
+                    box.angularVelocity.z += .004;
+                }
+            }
+            if (alignment["x"] > 0)
+            {
+                if (alignment["x"] < -box.angularVelocity.x)
+                {
+                    //box.angularVelocity.x = 0;
+                }
+                else
+                {
+                    box.angularVelocity.x -= .004;
+                }
+            }
+            if (alignment["x"] < 0)
+            {
+                if (alignment["x"] > -box.angularVelocity.x)
+                {
+                    //box.angularVelocity.x = 0;
+                }
+                else
+                {
+                    box.angularVelocity.x += .004;
+                }
+            }
         }
 
         if(prior_pos != sphere.getPosition)
@@ -203,38 +238,61 @@ function keyDown()
     {
         if(event.key == 'w')
         {
-            if (box.angularVelocity.z > -.2)
+            userInput = true;
+            
+            if (box.getQuaternion()["z"] < -maxTilt)
             {
-                box.angularVelocity.z -= .06;
+                box.angularVelocity.z = 0;
+            } 
+            else if (box.angularVelocity.z > -.18)
+            {
+                box.angularVelocity.z -= .04;
             }
-            console.log("New Rotation: " + box.getQuaternion());
 
+            //console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 's')
         {
+            userInput = true;
 
-            if (box.angularVelocity.z < .2)
+            if (box.getQuaternion()["z"] > maxTilt)
             {
-                box.angularVelocity.z += .06;
+                box.angularVelocity.z = 0;
             }
-            console.log("New Rotation: " + box.getQuaternion());
+            else if (box.angularVelocity.z < .18)
+            {
+                box.angularVelocity.z += .04;
+            }
+            //console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'a')
         {
-            if (box.angularVelocity.x > -.2)
+            userInput = true;
+
+            if (box.getQuaternion()["x"] < -maxTilt)
             {
-                box.angularVelocity.x -= .06;
+                box.angularVelocity.x = 0;
+            }
+            else if (box.angularVelocity.x > -.18)
+            {
+                box.angularVelocity.x -= .04;
 
             }
-            console.log("New Rotation: " + box.getQuaternion());
+            //console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'd')
         {
-            if (box.angularVelocity.x < .2)
+            userInput = true;
+
+            if (box.getQuaternion()["x"] > maxTilt)
             {
-                box.angularVelocity.x += .06;
+                box.angularVelocity.x = 0;
             }
-            console.log("New Rotation: " + box.getQuaternion());
+            else if (box.angularVelocity.x < .18)
+            {
+                box.angularVelocity.x += .04;
+            }
+            //console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'x')
         {

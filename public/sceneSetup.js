@@ -10,7 +10,7 @@ let world = new OIMO.World({
     broadphase: 0,
     worldscale: 1,
     info: true,
-    gravity: [0,-9.8,0]
+    gravity: [0,-18.6,0]
 });
 
 function oimoObjects()
@@ -21,7 +21,7 @@ function oimoObjects()
         type: "box",
         size: [1000,1,1000],
         pos: [0,0,0],
-        density: 1000,
+        density: 10000,
         rot: [0,0,0],
         move: true 
     });
@@ -30,7 +30,7 @@ function oimoObjects()
         type: "sphere",
         size:[20],
         pos:[0,50,0],
-        density:100,
+        density:1000,
         move:true
     });
 
