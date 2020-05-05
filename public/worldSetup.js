@@ -3,12 +3,13 @@ import * as OIMO from '/oimo.module.js';
 import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/loaders/GLTFLoader.js';
 import * as glMatrix from '/gl-matrix-min.js';
-import { oimoObjects, createSkyBox, lightSetup, basicTexture,createBananaArray} from '/sceneSetup.js';
+import { oimoObjects, createSkyBox, lightSetup, basicTexture,createBananaArray, createTrack} from '/sceneSetup.js';
 
 var paused = false;
 
 var world = null;
 var box= null;
+var trackObjects = null;
 var sphere = null;
 var monkey_ball = null;
 var bananaArray = null;
@@ -19,9 +20,10 @@ var materialType = 'MeshPhongMaterial';
 var geos = {};
 var mats = {};
 var BananaCluster = [];
-var BananasCollected = 0; 
-const gltfLoader = new GLTFLoader();
-
+var BananasCollected = 0;
+var trackBodys = [];
+var trackMeshes = [];
+var trackBodyOriginal = [];
 //the maximum degrees that the level can be tilted
 var maxTilt = 15;
 
@@ -44,7 +46,7 @@ async function setup()
 
     controls = new OrbitControls( camera, canvas );
     controls.update();
-    controls.maxDistance = 300;
+    controls.maxDistance = 1000;
 
     light = lightSetup();
 
@@ -54,28 +56,44 @@ async function setup()
     createSkyBox(scene);
 
     var oimoObj = oimoObjects(); world = oimoObj[0]; box = oimoObj[1]; sphere = oimoObj[2];
-    bodys.push(box);
-    bodys.push(sphere);
 
     CamTarget = new THREE.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
 
     geos['sphere'] = new THREE.BufferGeometry().fromGeometry( new THREE.SphereGeometry(20,30,10));
-    geos['box'] = new THREE.BufferGeometry().fromGeometry( new THREE.BoxGeometry(1000,1,1000));
+    geos['box'] = new THREE.BufferGeometry().fromGeometry( new THREE.BoxGeometry(480,1,480));
     mats['sph']    = new THREE[materialType]( {shininess: 10, map: basicTexture(0), name:'sph' } );
     mats['box']    = new THREE[materialType]( {shininess: 10, map: basicTexture(2), name:'box' } );
 
-    var ground = new THREE.Mesh( geos.box, mats.box );
-    console.log("GROUND:", ground);
-    ground.position.set(0,0,0);
-    meshes.push(ground);
-    
-    meshes.push (new THREE.Mesh( geos.sphere, mats.sph ));
-    meshes[0].position.set(0,50,0);
-    meshes[0].receiveShadow = true;
-    meshes[1].castShadow = true;
+    //var ground = new THREE.Mesh( geos.box, mats.box );
+    console.log("WORLD",world);
+    trackObjects = await createTrack(scene, world);
+    trackMeshes = trackObjects[1].children;
+    trackBodys = trackObjects[0];
+    for(var i = 0; i < trackBodys.length; i++)
+    {
+        let temp = [];
+        temp.push(trackBodys[i].position.x);
+        temp.push(trackBodys[i].position.y);
+        temp.push(trackBodys[i].position.z);
+        trackBodyOriginal.push(temp);
+    }
+    world = trackObjects[2];
+    console.log("WORLD",world);
+    console.log(trackBodys[0]);
+    console.log("TRACKMESHES",trackMeshes);
+    console.log("TRACKBODIES",trackBodys);
+    //bodys.push(box);
+    bodys.push(sphere);
+    //console.log("GROUND:", ground);
+    //ground.position.set(0,0,0);
+    //meshes.push(ground);
 
-    scene.add( meshes[1]);
+    meshes.push (new THREE.Mesh( geos.sphere, mats.sph ));
+    meshes[0].position.set(0,100,0);
+    meshes[0].receiveShadow = true;
+    meshes[0].castShadow = true;
     scene.add(meshes[0]);
+    //scene.add(meshes[0]);
 
     bananaArray = createBananaArray(scene);
     console.log("BANANA ARRAY: ", bananaArray);
@@ -100,7 +118,7 @@ function GamepadSetup()
 
 function BananaCounter()
 {
-    
+
     //console.log(bananaArray,"     BananaCluster");
     for(let i = 0; i< bananaArray.length; i++)
     {
@@ -130,12 +148,9 @@ function loop()
 
     if (!paused)
     {
-        box.position.set(0,0,0);
-        box.linearVelocity.set(0,0,0);
-    
         var prior_pos = sphere.getPosition()
         world.step();
-        
+
         let x, y, z, mesh, body;
 
         for(let i = 0; i < meshes.length; i++)
@@ -144,7 +159,6 @@ function loop()
             mesh = meshes[i];
 
             if(!body.sleeping){
-
                 mesh.position.copy(body.getPosition());
                 mesh.quaternion.copy(body.getQuaternion());
                 if(mesh.position.y<-400){
@@ -153,22 +167,36 @@ function loop()
             }
         }
 
+        for(let i = 0; i < trackMeshes.length; i++)
+        {
+            body = trackBodys[i];
+            mesh = trackMeshes[i];
+            var temp = [trackBodyOriginal[i][0],trackBodyOriginal[i][1],trackBodyOriginal[i][2]];
+            body.position.x = temp[0];
+            body.position.y = temp[1];
+            body.position.z = temp[2];
+            body.linearVelocity.set(0,0,0);
+            mesh.position.copy(body.getPosition());
+            mesh.quaternion.copy(body.getQuaternion());
+        }
+
         //Smoothly decrease the rotation of the ground
-        if (box.angularVelocity.z > 0)
+        
+        if (trackBodys[0].angularVelocity.z > 0)
         {
-            box.angularVelocity.z -= .003;
+            trackBodys[0].angularVelocity.z -= .003;
+        } 
+        if (trackBodys[0].angularVelocity.z < 0)
+        {
+            trackBodys[0].angularVelocity.z += .003;
         }
-        if (box.angularVelocity.z < 0)
+        if (trackBodys[0].angularVelocity.x > 0)
         {
-            box.angularVelocity.z += .003;
+            trackBodys[0].angularVelocity.x -= .003;
         }
-        if (box.angularVelocity.x > 0)
+        if (trackBodys[0].angularVelocity.x < 0)
         {
-            box.angularVelocity.x -= .003;
-        }
-        if (box.angularVelocity.x < 0)
-        {
-            box.angularVelocity.x += .003;
+            trackBodys[0].angularVelocity.x += .003;
         }
 
         if(prior_pos != sphere.getPosition)
@@ -199,57 +227,74 @@ function loop()
 
 function keyDown()
 {
-    document.addEventListener('keydown', function(event) 
+    document.addEventListener('keydown', function(event)
     {
         if(event.key == 'w')
         {
-            if (box.angularVelocity.z > -.2)
+            
+            if (trackBodys[0].angularVelocity.z > -.2)
             {
-                box.angularVelocity.z -= .06;
+                trackBodys[0].angularVelocity.z -= .06;
             }
-            console.log("New Rotation: " + box.getQuaternion());
+            console.log("New Rotation: " + trackBodys[0].getQuaternion());
 
         }
         if(event.key == 's')
         {
-
-            if (box.angularVelocity.z < .2)
+            if (trackBodys[0].angularVelocity.z < .2)
             {
-                box.angularVelocity.z += .06;
+                trackBodys[0].angularVelocity.z += .06;
             }
-            console.log("New Rotation: " + box.getQuaternion());
+            console.log("New Rotation: " + trackBodys[0].getQuaternion());
         }
         if(event.key == 'a')
         {
-            if (box.angularVelocity.x > -.2)
+            if (trackBodys[0].angularVelocity.x > -.2)
             {
-                box.angularVelocity.x -= .06;
-
+                trackBodys[0].angularVelocity.x -= .06;
             }
-            console.log("New Rotation: " + box.getQuaternion());
+            console.log("New Rotation: " + trackBodys[0].getQuaternion());
         }
         if(event.key == 'd')
         {
-            if (box.angularVelocity.x < .2)
+            if (trackBodys[0].angularVelocity.x < .2)
             {
-                box.angularVelocity.x += .06;
+                trackBodys[0].angularVelocity.x += .06;
             }
-            console.log("New Rotation: " + box.getQuaternion());
+            console.log("New Rotation: " + trackBodys[0].getQuaternion());
         }
-        if(event.key == 'x')
-        {
 
-            if(!(sphere.linearVelocity.y >= -40))
+        if(event.key == "i")
+        {
+            if (sphere.linearVelocity.x < 20)
             {
-               sphere.linearVelocity.y -=.1;
-            };
-        }   
-        if(event.key == 'p')
-        {
-            //allows us to pause the game
-            paused = !paused;
-        }   
+                sphere.linearVelocity.x += 5;
+            }
+        }
 
+        if(event.key == "j")
+        {
+            if (sphere.linearVelocity.z < 20)
+            {
+                sphere.linearVelocity.z += 5;
+            }
+        }
+
+        if(event.key == "k")
+        {
+            if (sphere.linearVelocity.x > -20)
+            {
+                sphere.linearVelocity.x -= 5;
+            }
+        }
+
+        if(event.key == "l")
+        {
+            if (sphere.linearVelocity.z > -20)
+            {
+                sphere.linearVelocity.z -= 5;
+            }
+        }
     });
 }
 

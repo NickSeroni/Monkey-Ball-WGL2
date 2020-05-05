@@ -3,7 +3,6 @@ import * as OIMO from '/oimo.module.js';
 import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/loaders/GLTFLoader.js';
 
-
 let world = new OIMO.World({
     timestep:1/20,
     iterations: 4,
@@ -16,20 +15,20 @@ let world = new OIMO.World({
 function oimoObjects()
 {
     
-
-    let box = world.add({
-        type: "box",
-        size: [1000,1,1000],
-        pos: [0,0,0],
-        density: 1000,
-        rot: [0,0,0],
-        move: true 
-    });
+    let box = null;
+    // let box = world.add({
+    //     type: "box",
+    //     size: [1000,1,1000],
+    //     pos: [0,0,0],
+    //     density: 1000,
+    //     rot: [0,0,0],
+    //     move: true 
+    // });
 
     let sphere = world.add({
         type: "sphere",
         size:[20],
-        pos:[0,50,0],
+        pos:[0,100,0],
         density:100,
         move:true
     });
@@ -149,12 +148,88 @@ function createBananaArray(scene)
         });
         
         createBanana(x,y,z,name,scene,bananaArray,Physical);
-        
-       
-        
         counter++;
     }
     return bananaArray;
 }
 
-export { oimoObjects,createSkyBox, lightSetup, basicTexture,createBananaArray};
+function promisifyTrack(scene,world,group, scale, counter, track) {
+
+    return new Promise( (resolve, reject) => {
+
+        track.scale.set(scale,scale,scale);
+        console.log("TRACK: ", track);
+        track.traverse( function( node ) {
+            if ( node.isMesh ) { 
+                var bbox = new THREE.Box3().setFromObject(node);
+                var cent = bbox.getCenter(new THREE.Vector3());
+                var size = bbox.getSize(new THREE.Vector3());
+                var quaternion = node.quaternion;
+                console.log(node);
+                console.log("BBOX",bbox,cent,size);
+                let trackPart = world.add({
+                    name:"trackPart"+counter,
+                    type: "box",
+                    size:[size.x*scale,1,size.z*scale],
+                    pos:[cent.x,cent.y,cent.z],
+                    density: 1000,
+                    move: false,
+                });
+                trackPart.setQuaternion(quaternion);
+                console.log(quaternion);
+                console.log(trackPart);
+                group[counter] = trackPart;
+                counter++;
+            }
+        });
+        scene.add(track);
+        for(var i = 0; i < group.length; i++)
+        {
+            console.log("GROUP",group[i]);
+        }
+        resolve([group,track,world]); 
+    });
+
+}
+
+function promisifyLoader ( loader, onProgress ) {
+
+    function promiseLoader ( url ) {
+  
+      return new Promise( ( resolve, reject ) => {
+  
+        loader.load( url, resolve, onProgress, reject );
+      } );
+    }
+  
+    return {
+      originalLoader: loader,
+      load: promiseLoader,
+    };
+  
+  }
+
+
+const GLTFPromiseLoader = promisifyLoader( new GLTFLoader() );
+async function createTrack(scene, world)
+{
+    var group = [];
+    let counter = 0;
+    let returnVal = null;
+    let scale = 30;
+    await GLTFPromiseLoader.load('track1.gltf') 
+    .then( async ( loadedObject) => {
+        console.log(loadedObject);
+        promisifyTrack(scene,world,group, scale,counter, loadedObject.scene)
+        .then(async (data) => {
+            const res = data;
+            returnVal = res;
+        });
+    });
+    
+    console.log("TEST",returnVal[0]);
+    return returnVal;
+}
+
+export { oimoObjects,createSkyBox, lightSetup, basicTexture,createBananaArray, createTrack};
+
