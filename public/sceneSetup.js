@@ -68,7 +68,7 @@ function lightSetup()
     light.target.position.set( 0, 0, 0 );
     light.castShadow = true;
 
-    var d = 1000;
+    var d = 500;
     light.shadow.camera = new THREE.OrthographicCamera( -d, d, d, -d,  500, 1600 );
     light.shadow.bias = 0.0001;
     light.shadow.mapSize.width = light.shadow.mapSize.height = 1024;
