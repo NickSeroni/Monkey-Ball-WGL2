@@ -3,7 +3,7 @@ import * as OIMO from '/oimo.module.js';
 import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/loaders/GLTFLoader.js';
 import * as glMatrix from '/gl-matrix-min.js';
-import { oimoObjects, createSkyBox, lightSetup, basicTexture,createBananaArray} from '/sceneSetup.js';
+import { oimoObjects, createSkyBox, lightSetup, basicTexture,createBananaArray, createGroundMesh} from '/sceneSetup.js';
 
 var paused = false;
 
@@ -65,14 +65,21 @@ async function setup()
     mats['sph']    = new THREE[materialType]( {shininess: 10, map: basicTexture(0), name:'sph' } );
     mats['box']    = new THREE[materialType]( {shininess: 10, map: basicTexture(2), name:'box' } );
 
-    var ground = new THREE.Mesh( geos.box, mats.box );
-    console.log("GROUND:", ground);
+    meshes = await createGroundMesh(scene);
+    let ground = meshes[0];
     ground.position.set(0,0,0);
-    meshes.push(ground);
-    
+    ground.scale.set(125,1,125);
+    console.log("GROUND:", ground);
+    var bbox = new THREE.Box3().setFromObject(ground.children[0]);
+    console.log(bbox);
+    var size = bbox.getSize(new THREE.Vector3());
+    console.log(size);
     meshes.push (new THREE.Mesh( geos.sphere, mats.sph ));
-    meshes[0].position.set(0,50,0);
+
+    meshes[1].position.set(0,50,0);
     meshes[0].receiveShadow = true;
+    meshes[0].castShadow = true;
+    meshes[1].receiveShadow = true;
     meshes[1].castShadow = true;
 
     scene.add( meshes[1]);
@@ -150,7 +157,7 @@ function loop()
                 mesh.position.copy(body.getPosition());
                 mesh.quaternion.copy(body.getQuaternion());
                 if(mesh.position.y<-400){
-                    body.resetPosition(0,0,0);
+                    body.resetPosition(0,50,0);
                 }
             }
         }
