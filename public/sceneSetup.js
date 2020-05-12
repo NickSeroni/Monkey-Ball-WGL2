@@ -27,6 +27,7 @@ function oimoObjects()
     });
 
     let sphere = world.add({
+        name:'MonkeyBall',
         type: "sphere",
         size:[20],
         pos:[0,50,0],
@@ -118,6 +119,7 @@ function createBanana(x,y,z,name,scene,bananaArray,Physical)
         console.log("BANANA: ",banana);
         scene.add(banana);
         let obj ={
+            name: name,
             banana: banana,
             oimo: Physical
         };
@@ -141,7 +143,8 @@ function createBananaArray(scene)
         var z = banana_coords[i+2];
         name = "Banana"+counter;
         let Physical = world.add({
-            type: "box",
+            name: "Banana" + counter,
+            type: "cylinder",
             size:[1,1,2],
             pos:[x,y,z],
             density:1,

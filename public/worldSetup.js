@@ -105,14 +105,19 @@ function BananaCounter()
     for(let i = 0; i< bananaArray.length; i++)
     {
         //console.log(bananaArray,"                ", sphere.position.x );
-        if(world.getContact(bananaArray[i].oimo, sphere));
+        if(world.checkContact( bananaArray[i].name, 'MonkeyBall'))
         {
-        //     console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        //     scene.remove(BananaCluster[i].banana);
-        //     scene.remove(BananaCluster[i].oimo);
+             console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        
+            // let temp2= world.getObjectByName();'
+             console.log(bananaArray[i],"       is the banana array");
+         //    console.log("temp = ",temp);
+             world.remove(bananaArray[i].oimo);
+             scene.remove(scene.getObjectByName( bananaArray[i].name));
             BananasCollected++;
             //system("pause");
         }
+        console.log('\n');
     }
 }
 
@@ -248,7 +253,29 @@ function keyDown()
         {
             //allows us to pause the game
             paused = !paused;
-        }   
+        } 
+        if(event.key=='i')
+        {
+            sphere.linearVelocity.x +=.01;
+        } 
+        if(event.key == 'k')
+        {
+            sphere.linearVelocity.x -=.01;
+        }
+        if(event.key == 'l')
+        {
+            sphere.linearVelocity.z += .01
+        }
+        if(event.key == 'j')
+        {
+            sphere.linearVelocity.z -= .01
+        }
+        if(event.key == 'm')
+        {
+            
+            box.angularVelocity.x =0;
+            box.angularVelocity.z =0;
+        } 
 
     });
 }
