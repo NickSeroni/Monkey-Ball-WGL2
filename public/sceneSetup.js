@@ -10,20 +10,19 @@ let world = new OIMO.World({
     broadphase: 0,
     worldscale: 1,
     info: true,
-    gravity: [0,-9.8,0]
+    gravity: [0,-18.6,0]
 });
 
 function oimoObjects()
 {
-    
-
     let box = world.add({
         type: "box",
-        size: [1000,1,1000],
+        size: [2000,4,2000],
         pos: [0,0,0],
-        density: 1000,
+        density: 10000,
         rot: [0,0,0],
-        move: true 
+        move: true,
+        collidesWith: 0xffffffff & ~(1 << 1)
     });
 
     let sphere = world.add({
@@ -31,7 +30,7 @@ function oimoObjects()
         type: "sphere",
         size:[20],
         pos:[0,50,0],
-        density:100,
+        density:1000,
         move:true
     });
 
@@ -71,7 +70,7 @@ function lightSetup()
     light.target.position.set( 0, 0, 0 );
     light.castShadow = true;
 
-    var d = 300;
+    var d = 500;
     light.shadow.camera = new THREE.OrthographicCamera( -d, d, d, -d,  500, 1600 );
     light.shadow.bias = 0.0001;
     light.shadow.mapSize.width = light.shadow.mapSize.height = 1024;
@@ -131,7 +130,13 @@ function createBanana(x,y,z,name,scene,bananaArray,Physical)
 function createBananaArray(scene)
 {
     var bananaArray = [];
-    var banana_coords = [100,10,0,-100,10,0,0,10,100,0,10,-100];
+    var banana_coords = [];//[100,10,0,-100,10,0,0,10,100,0,10,-100];
+    for(var i = 0; i < 30; i++)
+    {
+        banana_coords.push(Math.floor(Math.random() * 2001) - 1000);
+        banana_coords.push(10);
+        banana_coords.push(Math.floor(Math.random() * 2001) - 1000);
+    }
     let counter = 0;
     let name = "";
     let retval =[];
@@ -148,16 +153,42 @@ function createBananaArray(scene)
             size:[1,1,2],
             pos:[x,y,z],
             density:1,
-            move:false
+            move:false,
+            belongsTo: 1 << 1,
         });
         
         createBanana(x,y,z,name,scene,bananaArray,Physical);
-        
-       
-        
         counter++;
     }
     return bananaArray;
 }
 
-export { oimoObjects,createSkyBox, lightSetup, basicTexture,createBananaArray};
+function test(trackName,scene,meshes)
+{
+    let track = null;
+    return new Promise((resolve, reject) => {
+        gltfLoader.load('track1.gltf',(gltf) => {
+            track = gltf.scene;
+            let temp = [];
+            temp.push(track.children[0]);
+            track.children = temp;
+            track.traverse( function( node ) {
+                if ( node.isMesh ) { node.receiveShadow = true;}
+            });
+            scene.add(track);
+            meshes.push(track);
+            resolve(meshes);
+        });
+      });
+}
+
+async function createGroundMesh(scene)
+{
+    var meshes = [];
+    let track = null;
+    const test1 = await test('track.gltf', scene,meshes);
+    console.log(test1);
+    return test1;
+}
+
+export { oimoObjects,createSkyBox, lightSetup, basicTexture,createBananaArray, createGroundMesh};

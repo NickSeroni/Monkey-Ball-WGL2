@@ -3,7 +3,7 @@ import * as OIMO from '/oimo.module.js';
 import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/loaders/GLTFLoader.js';
 import * as glMatrix from '/gl-matrix-min.js';
-import { oimoObjects, createSkyBox, lightSetup, basicTexture,createBananaArray} from '/sceneSetup.js';
+import { oimoObjects, createSkyBox, lightSetup, basicTexture,createBananaArray, createGroundMesh} from '/sceneSetup.js';
 
 var paused = false;
 
@@ -23,7 +23,8 @@ var BananasCollected = 0;
 const gltfLoader = new GLTFLoader();
 
 //the maximum degrees that the level can be tilted
-var maxTilt = 15;
+var maxTilt = .10;
+var userInput = false;
 
 var CamTarget = {};
 
@@ -64,14 +65,21 @@ async function setup()
     mats['sph']    = new THREE[materialType]( {shininess: 10, map: basicTexture(0), name:'sph' } );
     mats['box']    = new THREE[materialType]( {shininess: 10, map: basicTexture(2), name:'box' } );
 
-    var ground = new THREE.Mesh( geos.box, mats.box );
-    console.log("GROUND:", ground);
+    meshes = await createGroundMesh(scene);
+    let ground = meshes[0];
     ground.position.set(0,0,0);
-    meshes.push(ground);
-    
+    ground.scale.set(125,1,125);
+    console.log("GROUND:", ground);
+    var bbox = new THREE.Box3().setFromObject(ground.children[0]);
+    console.log(bbox);
+    var size = bbox.getSize(new THREE.Vector3());
+    console.log(size);
     meshes.push (new THREE.Mesh( geos.sphere, mats.sph ));
-    meshes[0].position.set(0,50,0);
+
+    meshes[1].position.set(0,50,0);
     meshes[0].receiveShadow = true;
+    meshes[0].castShadow = true;
+    meshes[1].receiveShadow = true;
     meshes[1].castShadow = true;
 
     scene.add( meshes[1]);
@@ -131,6 +139,7 @@ function onWindowResize() {
 
 function loop()
 {
+    userInput = false;
     keyDown();
 
     if (!paused)
@@ -153,27 +162,60 @@ function loop()
                 mesh.position.copy(body.getPosition());
                 mesh.quaternion.copy(body.getQuaternion());
                 if(mesh.position.y<-400){
-                    body.resetPosition(0,0,0);
+                    body.resetPosition(0,50,0);
                 }
             }
         }
 
-        //Smoothly decrease the rotation of the ground
-        if (box.angularVelocity.z > 0)
+        if (userInput == false)
         {
-            box.angularVelocity.z -= .003;
-        }
-        if (box.angularVelocity.z < 0)
-        {
-            box.angularVelocity.z += .003;
-        }
-        if (box.angularVelocity.x > 0)
-        {
-            box.angularVelocity.x -= .003;
-        }
-        if (box.angularVelocity.x < 0)
-        {
-            box.angularVelocity.x += .003;
+            //Smoothly decrease the rotation of the ground
+            let alignment = box.getQuaternion();
+
+            if (alignment["z"] > 0)
+            {
+                if (alignment["z"] < -box.angularVelocity.z)
+                {
+                    //box.angularVelocity.z = 0;
+                }
+                else
+                {
+                    box.angularVelocity.z -= .004;
+                }
+            }
+            if (alignment["z"] < 0)
+            {
+                if (alignment["z"] > -box.angularVelocity.z)
+                {
+                    //box.angularVelocity.z = 0;
+                }
+                else
+                {
+                    box.angularVelocity.z += .004;
+                }
+            }
+            if (alignment["x"] > 0)
+            {
+                if (alignment["x"] < -box.angularVelocity.x)
+                {
+                    //box.angularVelocity.x = 0;
+                }
+                else
+                {
+                    box.angularVelocity.x -= .004;
+                }
+            }
+            if (alignment["x"] < 0)
+            {
+                if (alignment["x"] > -box.angularVelocity.x)
+                {
+                    //box.angularVelocity.x = 0;
+                }
+                else
+                {
+                    box.angularVelocity.x += .004;
+                }
+            }
         }
 
         if(prior_pos != sphere.getPosition)
@@ -208,38 +250,61 @@ function keyDown()
     {
         if(event.key == 'w')
         {
-            if (box.angularVelocity.z > -.2)
+            userInput = true;
+            
+            if (box.getQuaternion()["z"] < -maxTilt)
             {
-                box.angularVelocity.z -= .06;
+                box.angularVelocity.z = 0;
+            } 
+            else if (box.angularVelocity.z > -.18)
+            {
+                box.angularVelocity.z -= .04;
             }
-            console.log("New Rotation: " + box.getQuaternion());
 
+            //console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 's')
         {
+            userInput = true;
 
-            if (box.angularVelocity.z < .2)
+            if (box.getQuaternion()["z"] > maxTilt)
             {
-                box.angularVelocity.z += .06;
+                box.angularVelocity.z = 0;
             }
-            console.log("New Rotation: " + box.getQuaternion());
+            else if (box.angularVelocity.z < .18)
+            {
+                box.angularVelocity.z += .04;
+            }
+            //console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'a')
         {
-            if (box.angularVelocity.x > -.2)
+            userInput = true;
+
+            if (box.getQuaternion()["x"] < -maxTilt)
             {
-                box.angularVelocity.x -= .06;
+                box.angularVelocity.x = 0;
+            }
+            else if (box.angularVelocity.x > -.18)
+            {
+                box.angularVelocity.x -= .04;
 
             }
-            console.log("New Rotation: " + box.getQuaternion());
+            //console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'd')
         {
-            if (box.angularVelocity.x < .2)
+            userInput = true;
+
+            if (box.getQuaternion()["x"] > maxTilt)
             {
-                box.angularVelocity.x += .06;
+                box.angularVelocity.x = 0;
             }
-            console.log("New Rotation: " + box.getQuaternion());
+            else if (box.angularVelocity.x < .18)
+            {
+                box.angularVelocity.x += .04;
+            }
+            //console.log("New Rotation: " + box.getQuaternion());
         }
         if(event.key == 'x')
         {
