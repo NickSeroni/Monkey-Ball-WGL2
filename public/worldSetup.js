@@ -111,26 +111,24 @@ function BananaCounter()
     
     //console.log(bananaArray,"     BananaCluster");
     for(let i = 0; i< bananaArray.length; i++)
-    {let bitshift= 1<<2;
+    {
         //console.log(bananaArray,"                ", sphere.position.x );
         if(world.checkContact( bananaArray[i].name, 'MonkeyBall'))
         {
-             console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",bananaArray[i].oimo)
+             //console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",bananaArray[i].oimo)
         
             // let temp2= world.getObjectByName();'
              console.log(bananaArray[i],"       is the banana array");
              scene.remove(scene.getObjectByName( bananaArray[i].name));
          //    console.log("temp = ",temp);
-             //world[bananaArray[i]]["belongsTo"] = bitshift;
+             bananaArray[i].oimo.remove();
+
              BananasCollected++;
-             console.log(" After Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",bananaArray[i].oimo,"    ",1<<1,"   ",BananasCollected);
-       
-            
+             console.log(" BANANAS COLLECTED: ",BananasCollected);
             bananaArray.splice(i,1);
             i--;
             //system("pause");
         }
-        console.log('\n');
     }
 }
 

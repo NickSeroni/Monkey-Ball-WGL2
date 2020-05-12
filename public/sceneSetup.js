@@ -32,7 +32,7 @@ function oimoObjects()
         pos:[0,50,0],
         density:1000,
         move:true,
-        collidesWith: 0xffffffff & ~ (1<< 2)
+        collidesWith: 0xffffffff & ~(1<< 2)
 
     });
     // let checkBox = world.add({
@@ -135,6 +135,7 @@ function createBananaArray(scene)
 {
     var bananaArray = [];
     var banana_coords = [];//[100,10,0,-100,10,0,0,10,100,0,10,-100];
+    banana_coords.push(100,10,0)
     for(var i = 0; i <30; i++)
     {
         banana_coords.push(Math.floor(Math.random() * 2000) - 1000);
