@@ -111,18 +111,23 @@ function BananaCounter()
     
     //console.log(bananaArray,"     BananaCluster");
     for(let i = 0; i< bananaArray.length; i++)
-    {
+    {let bitshift= 1<<2;
         //console.log(bananaArray,"                ", sphere.position.x );
         if(world.checkContact( bananaArray[i].name, 'MonkeyBall'))
         {
-             console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+             console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",bananaArray[i].oimo)
         
             // let temp2= world.getObjectByName();'
              console.log(bananaArray[i],"       is the banana array");
-         //    console.log("temp = ",temp);
-             world.remove(bananaArray[i].oimo);
              scene.remove(scene.getObjectByName( bananaArray[i].name));
-            BananasCollected++;
+         //    console.log("temp = ",temp);
+             //world[bananaArray[i]]["belongsTo"] = bitshift;
+             BananasCollected++;
+             console.log(" After Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",bananaArray[i].oimo,"    ",1<<1,"   ",BananasCollected);
+       
+            
+            bananaArray.splice(i,1);
+            i--;
             //system("pause");
         }
         console.log('\n');
@@ -258,7 +263,7 @@ function keyDown()
             } 
             else if (box.angularVelocity.z > -.18)
             {
-                box.angularVelocity.z -= .04;
+                box.angularVelocity.z -= .0004;
             }
 
             //console.log("New Rotation: " + box.getQuaternion());
@@ -273,7 +278,7 @@ function keyDown()
             }
             else if (box.angularVelocity.z < .18)
             {
-                box.angularVelocity.z += .04;
+                box.angularVelocity.z += .0004;
             }
             //console.log("New Rotation: " + box.getQuaternion());
         }
@@ -287,7 +292,7 @@ function keyDown()
             }
             else if (box.angularVelocity.x > -.18)
             {
-                box.angularVelocity.x -= .04;
+                box.angularVelocity.x -= .0004;
 
             }
             //console.log("New Rotation: " + box.getQuaternion());
@@ -302,7 +307,7 @@ function keyDown()
             }
             else if (box.angularVelocity.x < .18)
             {
-                box.angularVelocity.x += .04;
+                box.angularVelocity.x += .0004;
             }
             //console.log("New Rotation: " + box.getQuaternion());
         }

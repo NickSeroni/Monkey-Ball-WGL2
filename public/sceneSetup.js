@@ -22,7 +22,7 @@ function oimoObjects()
         density: 10000,
         rot: [0,0,0],
         move: true,
-        collidesWith: 0xffffffff & ~(1 << 1)
+        collidesWith: 0xffffffff & ~ (1 << 1) & ~(1<< 2)
     });
 
     let sphere = world.add({
@@ -31,8 +31,12 @@ function oimoObjects()
         size:[20],
         pos:[0,50,0],
         density:1000,
-        move:true
+        move:true,
+        collidesWith: 0xffffffff & ~ (1<< 2)
+
     });
+    // let checkBox = world.add({
+    // }
 
     return [world,box,sphere];
 }
@@ -131,9 +135,9 @@ function createBananaArray(scene)
 {
     var bananaArray = [];
     var banana_coords = [];//[100,10,0,-100,10,0,0,10,100,0,10,-100];
-    for(var i = 0; i < 30; i++)
+    for(var i = 0; i <30; i++)
     {
-        banana_coords.push(Math.floor(Math.random() * 2001) - 1000);
+        banana_coords.push(Math.floor(Math.random() * 2000) - 1000);
         banana_coords.push(10);
         banana_coords.push(Math.floor(Math.random() * 2001) - 1000);
     }
@@ -158,6 +162,7 @@ function createBananaArray(scene)
         });
         
         createBanana(x,y,z,name,scene,bananaArray,Physical);
+        console.log(bananaArray);
         counter++;
     }
     return bananaArray;
