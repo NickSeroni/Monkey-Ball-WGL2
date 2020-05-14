@@ -20,6 +20,7 @@ var geos = {};
 var mats = {};
 var BananaCluster = [];
 var BananasCollected = 0; 
+var movingGroup = new THREE.Group();
 const gltfLoader = new GLTFLoader();
 
 //the maximum degrees that the level can be tilted
@@ -57,7 +58,7 @@ async function setup()
     var oimoObj = oimoObjects(); world = oimoObj[0]; box = oimoObj[1]; sphere = oimoObj[2];
     bodys.push(box);
     bodys.push(sphere);
-
+    
     CamTarget = new THREE.Vector3(sphere.position.x, sphere.position.y, sphere.position.z);
 
     geos['sphere'] = new THREE.BufferGeometry().fromGeometry( new THREE.SphereGeometry(20,30,10));
@@ -85,7 +86,11 @@ async function setup()
     scene.add( meshes[1]);
     scene.add(meshes[0]);
 
-    bananaArray = createBananaArray(scene);
+    movingGroup.add(ground);
+    console.log("GROUP",movingGroup);
+    bananaArray = createBananaArray(scene,movingGroup);
+    scene.add(movingGroup);
+    console.log("GROUP",movingGroup);
     console.log("BANANA ARRAY: ", bananaArray);
 
     window.addEventListener( 'resize', onWindowResize, false );
@@ -119,7 +124,7 @@ function BananaCounter()
         
             // let temp2= world.getObjectByName();'
              console.log(bananaArray[i],"       is the banana array");
-             scene.remove(scene.getObjectByName( bananaArray[i].name));
+             movingGroup.remove(scene.getObjectByName( bananaArray[i].name));
          //    console.log("temp = ",temp);
              bananaArray[i].oimo.remove();
 
@@ -162,14 +167,32 @@ function loop()
             body = bodys[i];
             mesh = meshes[i];
 
-            if(!body.sleeping){
-
-                mesh.position.copy(body.getPosition());
-                mesh.quaternion.copy(body.getQuaternion());
-                if(mesh.position.y<-400){
-                    body.resetPosition(0,50,0);
+            if(i == 0)
+            {  
+                movingGroup.position.copy(body.getPosition());
+                movingGroup.quaternion.copy(body.getQuaternion());
+                for(let j = 0; j< bananaArray.length; j++){
+                    //if(j == 0)
+                        //console.log(movingGroup.children[j+1].getWorldQuaternion(),bananaArray[j].oimo.getQuaternion());
+                    let pos = movingGroup.children[j+1].getWorldPosition();
+                    let quaternion = movingGroup.children[j+1].getWorldQuaternion();
+                    bananaArray[j].oimo.position.x = pos.x;
+                    bananaArray[j].oimo.position.y = pos.y;
+                    bananaArray[j].oimo.position.z = pos.z;
+                    bananaArray[j].oimo.quaternion.copy(quaternion);
                 }
             }
+            else
+            {
+                if(!body.sleeping){
+
+                    mesh.position.copy(body.getPosition());
+                    mesh.quaternion.copy(body.getQuaternion());
+                    if(mesh.position.y<-400){
+                        body.resetPosition(0,50,0);
+                    }
+                }
+            } 
         }
 
         if (userInput == false)
@@ -346,6 +369,12 @@ function keyDown()
             box.angularVelocity.x =0;
             box.angularVelocity.z =0;
         } 
+        if(event.key == 'r')
+        {
+            sphere.position.x = 0;
+            sphere.position.y = 50;
+            sphere.position.z = 0;
+        }
 
     });
 }

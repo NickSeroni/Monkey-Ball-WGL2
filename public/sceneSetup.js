@@ -145,9 +145,10 @@ function basicTexture(n){
 }
 
 const gltfLoader = new GLTFLoader();
-function createBanana(x,y,z,name,scene,bananaArray,Physical)
+function createBanana(x,y,z,name,scene,bananaArray,Physical,group)
 {
     let banana;
+    
     //console.log("SCENE");
     gltfLoader.load('banana.gltf', (gltf) => {
         banana = gltf.scene;
@@ -160,22 +161,23 @@ function createBanana(x,y,z,name,scene,bananaArray,Physical)
     
         });
         //console.log("BANANA: ",banana);
-        scene.add(banana);
+        //scene.add(banana);
         let obj ={
             name: name,
             banana: banana,
             oimo: Physical
         };
+        group.add(banana);
         bananaArray.push(obj);
       });
     //return banana;
 }
 
-function createBananaArray(scene)
+function createBananaArray(scene,group)
 {
     var bananaArray = [];
     var banana_coords = [];//[100,10,0,-100,10,0,0,10,100,0,10,-100];
-    banana_coords.push(100,10,0)
+    banana_coords.push(900,10,0)
     for(var i = 0; i <29; i++)
     {
         banana_coords.push(Math.floor(Math.random() * 1900) - 1000);
@@ -195,14 +197,14 @@ function createBananaArray(scene)
         let Physical = world.add({
             name: "Banana" + counter,
             type: "cylinder",
-            size:[2,10,4],
+            size:[3,10,4],
             pos:[x,y,z],
             density:1,
             move:false,
-            belongsTo: 1 << 1,
+            belongsTo: 1 << 1
         });
         
-        createBanana(x,y,z,name,scene,bananaArray,Physical);
+        createBanana(x,y,z,name,scene,bananaArray,Physical,group);
         //console.log(bananaArray);
         counter++;
     }
@@ -222,7 +224,7 @@ function test(trackName,scene,meshes)
             track.traverse( function( node ) {
                 if ( node.isMesh ) { node.receiveShadow = true;}
             });
-            scene.add(track);
+            //scene.add(track);
             meshes.push(track);
             resolve(meshes);
         });
