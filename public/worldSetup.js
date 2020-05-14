@@ -123,7 +123,9 @@ function BananaCounter()
          //    console.log("temp = ",temp);
              bananaArray[i].oimo.remove();
 
-             BananasCollected++;
+            BananasCollected++;
+            var counterID = document.getElementById('counter');
+            counterID.innerHTML = "Banana Counter: "+ BananasCollected + " / 30";
              console.log(" BANANAS COLLECTED: ",BananasCollected);
             bananaArray.splice(i,1);
             i--;
@@ -149,7 +151,7 @@ function loop()
     {
         box.position.set(0,0,0);
         box.linearVelocity.set(0,0,0);
-    
+        box.angularVelocity.y = 0;
         var prior_pos = sphere.getPosition()
         world.step();
         
