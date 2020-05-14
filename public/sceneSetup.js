@@ -4,6 +4,8 @@ import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/t
 import {GLTFLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r115/examples/jsm/loaders/GLTFLoader.js';
 
 
+
+
 let world = new OIMO.World({
     timestep:1/20,
     iterations: 4,
@@ -168,6 +170,7 @@ function createBananaArray(scene)
     }
     return bananaArray;
 }
+
 
 function test(trackName,scene,meshes)
 {

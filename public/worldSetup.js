@@ -349,3 +349,4 @@ function keyDown()
 }
 
 setup();
+export { BananaCounter };
