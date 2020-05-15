@@ -144,7 +144,7 @@ function onWindowResize() {
 
 function loop()
 {
-    userInput = false;
+    //userInput = false;
     keyDown();
 
     if (!paused)
@@ -191,10 +191,12 @@ function loop()
         }
         
 
-        if (userInput == false && userInputWait == false)
+        if (userInput == false || userInputWait == false)
         {
             //Smoothly decrease the rotation of the ground
             let alignment = box.getQuaternion();
+
+            //console.log("Adjusting tilt");
 
             if (alignment["z"] > 0)
             {
@@ -375,6 +377,26 @@ function keyDown()
             sphere.position.z = 0;
         }
 
+    });
+
+    document.addEventListener('keyup', function(event) 
+    {
+        if(event.key == 'w')
+        {
+            userInput = false;
+        }
+        if(event.key == 's')
+        {
+            userInput = false;
+        }
+        if(event.key == 'a')
+        {
+            userInput = false;
+        }
+        if(event.key == 'd')
+        {
+            userInput = false;
+        }
     });
 }
 
