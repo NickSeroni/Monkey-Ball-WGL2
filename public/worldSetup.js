@@ -18,13 +18,13 @@ var antialias = true;
 var materialType = 'MeshPhongMaterial';
 var geos = {};
 var mats = {};
-var BananaCluster = [];
+var BananaCoords = null;
 var BananasCollected = 0; 
 var movingGroup = new THREE.Group();
 const gltfLoader = new GLTFLoader();
 
 //the maximum degrees that the level can be tilted
-var maxTilt = .05;
+var maxTilt = .02;
 var userInput = false;
 var userInputWait = true;
 
@@ -89,7 +89,9 @@ async function setup()
 
     movingGroup.add(ground);
     console.log("GROUP",movingGroup);
-    bananaArray = createBananaArray(scene,movingGroup);
+    var retVal = createBananaArray(scene,movingGroup);
+    bananaArray = retVal[0];
+    BananaCoords = retVal[1];
     scene.add(movingGroup);
     console.log("GROUP",movingGroup);
     console.log("BANANA ARRAY: ", bananaArray);
@@ -152,42 +154,27 @@ function loop()
         box.position.set(0,0,0);
         box.linearVelocity.set(0,0,0);
         box.angularVelocity.y = 0;
+        for(let j = 0; j< bananaArray.length; j++)
+            bananaArray[j].oimo.position.set(BananaCoords[j],BananaCoords[j+1],BananaCoords[j+2]);
+        movingGroup.position.copy(box.getPosition());
+        movingGroup.quaternion.copy(box.getQuaternion());
         var prior_pos = sphere.getPosition()
         world.step();
         
         let x, y, z, mesh, body;
 
-        for(let i = 0; i < meshes.length; i++)
+        for(let i = 1; i < meshes.length; i++)
         {
             body = bodys[i];
             mesh = meshes[i];
+            if(!body.sleeping){
 
-            if(i == 0)
-            {  
-                movingGroup.position.copy(body.getPosition());
-                movingGroup.quaternion.copy(body.getQuaternion());
-                // for(let j = 0; j< bananaArray.length; j++){
-                //     //if(j == 0)
-                //         //console.log(movingGroup.children[j+1].getWorldQuaternion(),bananaArray[j].oimo.getQuaternion());
-                //     let pos = movingGroup.children[j+1].getWorldPosition();
-                //     let quaternion = movingGroup.children[j+1].getWorldQuaternion();
-                //     bananaArray[j].oimo.position.x = pos.x;
-                //     bananaArray[j].oimo.position.y = pos.y + 20;
-                //     bananaArray[j].oimo.position.z = pos.z;
-                //     bananaArray[j].oimo.quaternion.copy(quaternion);
-                // }
-            }
-            else
-            {
-                if(!body.sleeping){
-
-                    mesh.position.copy(body.getPosition());
-                    mesh.quaternion.copy(body.getQuaternion());
-                    if(mesh.position.y<-400){
-                        body.resetPosition(0,50,0);
-                    }
+                mesh.position.copy(body.getPosition());
+                mesh.quaternion.copy(body.getQuaternion());
+                if(mesh.position.y<-400){
+                    body.resetPosition(0,50,0);
                 }
-            } 
+            }
         }
         
 
@@ -242,6 +229,7 @@ function loop()
                     box.angularVelocity.x += .004;
                 }
             }
+            box.position.set(0,0,0);
         }
         if(userInput == false)
             userInputWait = false;

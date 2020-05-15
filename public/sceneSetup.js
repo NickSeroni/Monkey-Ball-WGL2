@@ -12,7 +12,7 @@ let world = new OIMO.World({
     broadphase: 0,
     worldscale: 1,
     info: true,
-    gravity: [0,-50,0]
+    gravity: [0,-65,0]
 });
 
 function oimoObjects()
@@ -208,15 +208,15 @@ function createBananaArray(scene,group)
         //console.log(bananaArray);
         counter++;
     }
-    return bananaArray;
+    return [bananaArray,banana_coords];
 }
 
 
-function test(trackName,scene,meshes)
+function trackBuild(trackName,meshes)
 {
     let track = null;
     return new Promise((resolve, reject) => {
-        gltfLoader.load('track1.gltf',(gltf) => {
+        gltfLoader.load(trackName,(gltf) => {
             track = gltf.scene;
             let temp = [];
             temp.push(track.children[0]);
@@ -235,9 +235,9 @@ async function createGroundMesh(scene)
 {
     var meshes = [];
     let track = null;
-    const test1 = await test('track.gltf', scene,meshes);
-    console.log(test1);
-    return test1;
+    const trackAwait = await trackBuild('track1.gltf',meshes);
+    console.log(trackAwait);
+    return trackAwait;
 }
 
 export { oimoObjects,createSkyBox, lightSetup, basicTexture,createBananaArray, createGroundMesh};
