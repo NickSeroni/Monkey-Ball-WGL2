@@ -24,8 +24,9 @@ var movingGroup = new THREE.Group();
 const gltfLoader = new GLTFLoader();
 
 //the maximum degrees that the level can be tilted
-var maxTilt = .10;
+var maxTilt = .05;
 var userInput = false;
+var userInputWait = true;
 
 var CamTarget = {};
 
@@ -113,20 +114,14 @@ function GamepadSetup()
 
 function BananaCounter()
 {
-    
-    //console.log(bananaArray,"     BananaCluster");
     for(let i = 0; i< bananaArray.length; i++)
     {
-        //console.log(bananaArray,"                ", sphere.position.x );
         if(world.checkContact( bananaArray[i].name, 'MonkeyBall'))
         {
-             //console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",bananaArray[i].oimo)
-        
-            // let temp2= world.getObjectByName();'
-             console.log(bananaArray[i],"       is the banana array");
-             movingGroup.remove(scene.getObjectByName( bananaArray[i].name));
-         //    console.log("temp = ",temp);
-             bananaArray[i].oimo.remove();
+            //console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",bananaArray[i].oimo)
+            console.log(bananaArray[0].oimo.position, "-", sphere.position)
+            movingGroup.remove(scene.getObjectByName( bananaArray[i].name));
+            bananaArray[i].oimo.remove();
 
             BananasCollected++;
             var counterID = document.getElementById('counter');
@@ -171,16 +166,16 @@ function loop()
             {  
                 movingGroup.position.copy(body.getPosition());
                 movingGroup.quaternion.copy(body.getQuaternion());
-                for(let j = 0; j< bananaArray.length; j++){
-                    //if(j == 0)
-                        //console.log(movingGroup.children[j+1].getWorldQuaternion(),bananaArray[j].oimo.getQuaternion());
-                    let pos = movingGroup.children[j+1].getWorldPosition();
-                    let quaternion = movingGroup.children[j+1].getWorldQuaternion();
-                    bananaArray[j].oimo.position.x = pos.x;
-                    bananaArray[j].oimo.position.y = pos.y;
-                    bananaArray[j].oimo.position.z = pos.z;
-                    bananaArray[j].oimo.quaternion.copy(quaternion);
-                }
+                // for(let j = 0; j< bananaArray.length; j++){
+                //     //if(j == 0)
+                //         //console.log(movingGroup.children[j+1].getWorldQuaternion(),bananaArray[j].oimo.getQuaternion());
+                //     let pos = movingGroup.children[j+1].getWorldPosition();
+                //     let quaternion = movingGroup.children[j+1].getWorldQuaternion();
+                //     bananaArray[j].oimo.position.x = pos.x;
+                //     bananaArray[j].oimo.position.y = pos.y + 20;
+                //     bananaArray[j].oimo.position.z = pos.z;
+                //     bananaArray[j].oimo.quaternion.copy(quaternion);
+                // }
             }
             else
             {
@@ -194,8 +189,9 @@ function loop()
                 }
             } 
         }
+        
 
-        if (userInput == false)
+        if (userInput == false && userInputWait == false)
         {
             //Smoothly decrease the rotation of the ground
             let alignment = box.getQuaternion();
@@ -245,7 +241,10 @@ function loop()
                 }
             }
         }
-
+        if(userInput == false)
+            userInputWait = false;
+        else
+            userInputWait = true;
         if(prior_pos != sphere.getPosition)
         {
             //console.log(sphere.getPosition());
@@ -284,7 +283,7 @@ function keyDown()
             {
                 box.angularVelocity.z = 0;
             } 
-            else if (box.angularVelocity.z > -.18)
+            else if (box.angularVelocity.z > -.05)
             {
                 box.angularVelocity.z -= .0004;
             }
@@ -299,7 +298,7 @@ function keyDown()
             {
                 box.angularVelocity.z = 0;
             }
-            else if (box.angularVelocity.z < .18)
+            else if (box.angularVelocity.z < .05)
             {
                 box.angularVelocity.z += .0004;
             }
@@ -313,7 +312,7 @@ function keyDown()
             {
                 box.angularVelocity.x = 0;
             }
-            else if (box.angularVelocity.x > -.18)
+            else if (box.angularVelocity.x > -.05)
             {
                 box.angularVelocity.x -= .0004;
 
@@ -328,7 +327,7 @@ function keyDown()
             {
                 box.angularVelocity.x = 0;
             }
-            else if (box.angularVelocity.x < .18)
+            else if (box.angularVelocity.x < .05)
             {
                 box.angularVelocity.x += .0004;
             }

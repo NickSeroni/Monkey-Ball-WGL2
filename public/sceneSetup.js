@@ -12,7 +12,7 @@ let world = new OIMO.World({
     broadphase: 0,
     worldscale: 1,
     info: true,
-    gravity: [0,-18.6,0]
+    gravity: [0,-50,0]
 });
 
 function oimoObjects()
@@ -177,11 +177,11 @@ function createBananaArray(scene,group)
 {
     var bananaArray = [];
     var banana_coords = [];//[100,10,0,-100,10,0,0,10,100,0,10,-100];
-    banana_coords.push(900,10,0)
+    banana_coords.push(900,0,0)
     for(var i = 0; i <29; i++)
     {
         banana_coords.push(Math.floor(Math.random() * 1900) - 1000);
-        banana_coords.push(10);
+        banana_coords.push(0);
         banana_coords.push(Math.floor(Math.random() * 1900) - 1000);
     }
     let counter = 0;
@@ -197,7 +197,7 @@ function createBananaArray(scene,group)
         let Physical = world.add({
             name: "Banana" + counter,
             type: "cylinder",
-            size:[3,10,4],
+            size:[5,220,5],
             pos:[x,y,z],
             density:1,
             move:false,
