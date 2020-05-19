@@ -121,14 +121,14 @@ function BananaCounter()
         if(world.checkContact( bananaArray[i].name, 'MonkeyBall'))
         {
             //console.log(" IN Deletion!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",bananaArray[i].oimo)
-            console.log(bananaArray[0].oimo.position, "-", sphere.position)
+         //   console.log(bananaArray[0].oimo.position, "-", sphere.position)
             movingGroup.remove(scene.getObjectByName( bananaArray[i].name));
             bananaArray[i].oimo.remove();
 
             BananasCollected++;
             var counterID = document.getElementById('counter');
             counterID.innerHTML = "Banana Counter: "+ BananasCollected + " / 30";
-             console.log(" BANANAS COLLECTED: ",BananasCollected);
+          //   console.log(" BANANAS COLLECTED: ",BananasCollected);
             bananaArray.splice(i,1);
             i--;
             //system("pause");
