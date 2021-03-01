@@ -20,7 +20,7 @@
     "express": "^4.17.1",
     "oimo": "^1.0.9",
     "path": "^0.12.7",
-    "three": "^0.115.0"
+    "three": "^0.125.0"
   },
   "keywords": [],
   "devDependencies": {}
